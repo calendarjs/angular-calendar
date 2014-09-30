@@ -1,0 +1,9 @@
+.cal-container .cal-table {
+  border-collapse: collapse;
+}
+.cal-container .cal-table td,
+.cal-container .something ul {
+  color: #ffff00;
+  text-transform: capitalize;
+  background-color: #080808;
+}
