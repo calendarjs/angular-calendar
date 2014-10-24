@@ -14,8 +14,6 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
 	<link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="../src/css/calendar.css">
 </head>
@@ -24,11 +22,38 @@
 <div class="container">
 	<div class="page-header">
 		<h1>Angular Calendar Example</h1>
+
+		<p>Angular calendar - does not mean you can use it only with Angular projects. You can very simply to use it in any project with only one dependency.
+			Since angular is other  javascript frameworks agnostic, calendar is and independent web component.</p>
 	</div>
 
 	<br/>
 
-	<div calendar style="width:100%" cal-view="'month'" cal-start-with="'12/12/2014'" cal-tmpl-root="'../src/tmpl/'"></div>
+	<div class="form-inline">
+		<div class="btn-group">
+			<button class="btn btn-warning" ng-class="{active: view == 'years'}" ng-click="view = 'years'">Years</button>
+			<button class="btn btn-warning" ng-class="{active: view == 'year'}" ng-click="view = 'year'">Year</button>
+			<button class="btn btn-warning" ng-class="{active: view == 'month'}" ng-click="view = 'month'">Month</button>
+			<button class="btn btn-warning" ng-class="{active: view == 'week'}" ng-click="view = 'week'">Week</button>
+			<button class="btn btn-warning" ng-class="{active: view == 'day'}" ng-click="view = 'day'">Day</button>
+			<button class="btn btn-warning" ng-class="{active: view == 'list'}" ng-click="view = 'list'">List</button>
+		</div>
+
+		<select class="form-control" ng-init="day = 'monday'" ng-model="day" ng-change="$broadcast('cal.setfirstday', day)">
+			<option value="monday">Monday</option>
+			<option value="sunday">Sunday</option>
+		</select>
+
+		<div class="btn-group">
+			<button class="btn btn-primary" ng-click="$broadcast('cal.nav', 'prev')">Prev</button>
+			<button class="btn btn-default" ng-click="$broadcast('cal.nav', 'today')">Today</button>
+			<button class="btn btn-primary" ng-click="$broadcast('cal.nav', 'next')">Next</button>
+		</div>
+	</div>
+
+	<br/>
+
+	<div calendar style="width:100%" cal-view="view" cal-start-with="'12/12/2014'" cal-tmpl-root="'../src/tmpl/'"></div>
 
 	<br/>
 </div>

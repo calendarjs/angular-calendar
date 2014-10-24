@@ -16,6 +16,14 @@ angular
 	.module('ngCalendar', [])
 	.directive('calendar', function($http, $log, $window, $timeout) {
 
+		var browser_timezone = '';
+		if(angular.isObject(window.jstz) && angular.isFunction(jstz.determine)) {
+			browser_timezone = jstz.determine().name();
+			if(!angular.isString(browser_timezone)) {
+				browser_timezone = '';
+			}
+		}
+
 		var linker = function(scope, element, attrs) {
 			var config = {
 				tmplPostfix: '',
@@ -29,7 +37,7 @@ angular
 				}
 			};
 
-			config.maxWidthSm = parseInt(scope.maxWidthSm || '300');
+			config.maxWidthSm = parseInt(scope.maxWidthSm || '400');
 			config.maxWidthMd = parseInt(scope.maxWidthMd || '1000');
 
 			scope.firstDay = scope.firstDay || 'monday';
@@ -72,6 +80,7 @@ angular
 							break;
 					}
 				}
+				$log.info('Calendar: navigated to:' + where);
 
 				changeView();
 			});
@@ -88,6 +97,7 @@ angular
 					scope.firstDay = day;
 					changeView();
 				}
+				$log.info('Calendar: Change day to:' + day);
 			});
 
 			scope.$on('cal.navdate', function(e, date) {
@@ -218,7 +228,7 @@ angular
 			}
 
 			function setTemplate() {
-				if(angular.isUndefined(scope.view) || angular.isUndefined(config.tmplPostfix)) {
+				if(angular.isUndefined(config.tmplPostfix)) {
 					return;
 				}
 
@@ -229,8 +239,10 @@ angular
 					scope.view = 'month';
 				}
 
+
 				var tmpl = scope.tmplRoot + scope.tmplPrefix + scope.view + config.tmplPostfix + '.html';
 				if(tmpl != scope.template) {
+				$log.info(scope);
 					element.children(0).html('loading...');
 					scope.template = tmpl;
 				}
@@ -240,11 +252,12 @@ angular
 				if(angular.isDefined(scope.src)) {
 					scope.events = scope.src;
 				} else if(angular.isDefined(scope.srcFunc)) {
-					scope.events = scope.srcFunc();
+					scope.events = scope.srcFunc(config.position.start, config.position.end, browser_timezone);
 				} else if(angular.isDefined(scope.srcUrl)) {
 					$http.get(scope.srcUrl, {
-						satrt: 1,
-						end: 2
+						satrt: config.position.start.getTime(),
+						end: config.position.end.getTime(),
+						browser_timezone: browser_timezone
 					}).success(function(data) {
 						if(angular.isArray(data.result)) {
 							scope.events = data.result;
@@ -255,7 +268,6 @@ angular
 					scope.events = [];
 				}
 			}
-
 		};
 
 
